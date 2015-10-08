@@ -14,9 +14,9 @@ import java.util.List;
  */
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder>{
     private LayoutInflater inflater;
-    private List<Object> list;
+    private List<Card> list;
 
-    public ListAdapter(Activity activity, List<Object> list){
+    public ListAdapter(Activity activity, List<Card> list){
         inflater = activity.getLayoutInflater();
         this.list = list;
     }
@@ -28,13 +28,13 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
 
     @Override
     public void onBindViewHolder(ListViewHolder holder, int position) {
-        holder.setContent(list.get(position));
+        holder.setContent(list.get(position).getTitle());
     }
 
     @Override
     public int getItemViewType(int position) {
         Object thing = list.get(position);
-        if( thing instanceof String)
+        if( thing != null /*instanceof Card*/)
             return R.layout.list_item;
         return R.layout.error_item;
     }

@@ -12,14 +12,23 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ScrollFragment extends Fragment {
+public class ScrollFragment extends Fragment implements YellBack{
     private RecyclerView recycler;
     private List<Object> items;
-    private ListAdapter adapter;
+    //private ListAdapter adapter;
+
+    @Override
+    public void onYellBack(List<Card> cards) {
+
+    }
 
     public static ScrollFragment newInstance() {
 
@@ -49,26 +58,72 @@ public class ScrollFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_scroll, container, false);
 
-        recycler = (RecyclerView) view.findViewById(R.id.recycler_view);
-        ArrayList<Object> temp =  new ArrayList<>();
-        for(int i =0; i < 10; i++) {
-            temp.add(i + ". did");
-            temp.add(i + ". this");
-            temp.add(i + ". work?");
-        }
-
-        adapter = new ListAdapter(getActivity(), temp);
         // Inflate the layout for this fragment
-        return view;
+        return inflater.inflate(R.layout.fragment_scroll, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recycler.setAdapter(adapter);
+        recycler = (RecyclerView) view.findViewById(R.id.recycler_view);
+
+        //TODO get the stuff for the list.
+        RestApi client = RestClient.getClient();
+        /*client.getCards("TrapCard",
+                new Callback<ParseResponse<Card>>() {
+                    @Override
+                    public void onResponse(Response<ParseResponse<Card>> response, Retrofit retrofit) {
+
+                        recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        recycler.setAdapter(new ListAdapter(getActivity(), response.body().results));
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+
+                    }
+                }
+        );*/
+
+        client.getCards("TrapCard").enqueue(
+                new Callback<ParseResponse<Card>>() {
+                    @Override
+                    public void onResponse(Response<ParseResponse<Card>> response, Retrofit retrofit) {
+                        System.out.println("Hello");
+                        recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        recycler.setAdapter(new ListAdapter(getActivity(), response.body().results));
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        System.out.println("Hopefully this makes it to logcat.");
+                        System.out.println(t.getMessage());
+                    }
+                }
+        );
+
+        client.getCards("EventCard").enqueue(
+                new Callback<ParseResponse<Card>>() {
+                    @Override
+                    public void onResponse(Response<ParseResponse<Card>> response, Retrofit retrofit) {
+                        System.out.println("Hello");
+                        recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        recycler.setAdapter(new ListAdapter(getActivity(), response.body().results));
+                        //TODO 1. Make update method in ListAdapater that..
+                        //TODO 2. Takes in new information and calls notifiessomethingchanged
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        System.out.println("Hopefully this makes it to logcat.");
+                        System.out.println(t.getMessage());
+                    }
+                }
+        );
+
+
+
     }
 }
