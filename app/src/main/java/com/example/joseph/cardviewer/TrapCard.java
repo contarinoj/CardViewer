@@ -12,4 +12,14 @@ public class TrapCard extends Card{
         this.body = body;
         this.trigger = trigger;
     }
+
+    @Override
+    public String getBodyText() {
+        return body + "\n\n" + trigger;
+    }
+
+    @Override
+    public String getExtraInfo() {
+        return "";
+    }
 }

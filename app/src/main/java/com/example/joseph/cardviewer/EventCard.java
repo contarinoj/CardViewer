@@ -10,4 +10,14 @@ public class EventCard extends Card{
         super(id,title,created,edited);
         this.text = text;
     }
+
+    @Override
+    public String getBodyText() {
+        return text;
+    }
+
+    @Override
+    public String getExtraInfo() {
+        return "";
+    }
 }

@@ -22,7 +22,7 @@ import retrofit.Retrofit;
  */
 public class ScrollFragment extends Fragment implements YellBack{
     private RecyclerView recycler;
-    private List<Object> items;
+    //private List<Object> items;
     //private ListAdapter adapter;
 
     @Override
@@ -68,6 +68,8 @@ public class ScrollFragment extends Fragment implements YellBack{
         super.onViewCreated(view, savedInstanceState);
 
         recycler = (RecyclerView) view.findViewById(R.id.recycler_view);
+        recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recycler.setAdapter(new ListAdapter(getActivity(), new ArrayList<Card>()));
 
         //TODO get the stuff for the list.
         RestApi client = RestClient.getClient();
@@ -92,8 +94,11 @@ public class ScrollFragment extends Fragment implements YellBack{
                     @Override
                     public void onResponse(Response<ParseResponse<Card>> response, Retrofit retrofit) {
                         System.out.println("Hello");
-                        recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recycler.setAdapter(new ListAdapter(getActivity(), response.body().results));
+                        ListAdapter adapter = (ListAdapter) recycler.getAdapter();
+                        adapter.addItemsToList(response.body().results);
+                        adapter.notifyDataSetChanged();
+                        //recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        //recycler.setAdapter(new ListAdapter(getActivity(), response.body().results));
                     }
 
                     @Override
@@ -109,8 +114,55 @@ public class ScrollFragment extends Fragment implements YellBack{
                     @Override
                     public void onResponse(Response<ParseResponse<Card>> response, Retrofit retrofit) {
                         System.out.println("Hello");
-                        recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recycler.setAdapter(new ListAdapter(getActivity(), response.body().results));
+                        ListAdapter adapter = (ListAdapter) recycler.getAdapter();
+                        adapter.addItemsToList(response.body().results);
+                        adapter.notifyDataSetChanged();
+                        //recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        //recycler.setAdapter(new ListAdapter(getActivity(), response.body().results));
+                        //TODO 1. Make update method in ListAdapater that..
+                        //TODO 2. Takes in new information and calls notifiessomethingchanged
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        System.out.println("Hopefully this makes it to logcat.");
+                        System.out.println(t.getMessage());
+                    }
+                }
+        );
+
+        client.getCards("EnvironmentCard").enqueue(
+                new Callback<ParseResponse<Card>>() {
+                    @Override
+                    public void onResponse(Response<ParseResponse<Card>> response, Retrofit retrofit) {
+                        System.out.println("Hello");
+                        ListAdapter adapter = (ListAdapter) recycler.getAdapter();
+                        adapter.addItemsToList(response.body().results);
+                        adapter.notifyDataSetChanged();
+                        //recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        //recycler.setAdapter(new ListAdapter(getActivity(), response.body().results));
+                        //TODO 1. Make update method in ListAdapater that..
+                        //TODO 2. Takes in new information and calls notifiessomethingchanged
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        System.out.println("Hopefully this makes it to logcat.");
+                        System.out.println(t.getMessage());
+                    }
+                }
+        );
+
+        client.getCards("MissionCard").enqueue(
+                new Callback<ParseResponse<Card>>() {
+                    @Override
+                    public void onResponse(Response<ParseResponse<Card>> response, Retrofit retrofit) {
+                        System.out.println("Hello");
+                        ListAdapter adapter = (ListAdapter) recycler.getAdapter();
+                        adapter.addItemsToList(response.body().results);
+                        adapter.notifyDataSetChanged();
+                        //recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        //recycler.setAdapter(new ListAdapter(getActivity(), response.body().results));
                         //TODO 1. Make update method in ListAdapater that..
                         //TODO 2. Takes in new information and calls notifiessomethingchanged
                     }

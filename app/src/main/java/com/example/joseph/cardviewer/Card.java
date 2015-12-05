@@ -20,5 +20,7 @@ public abstract class Card {
         return title;
     }
 
+    public abstract String getBodyText();
+    public abstract String getExtraInfo();
 
 }

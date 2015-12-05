@@ -7,7 +7,7 @@ import android.view.MenuItem;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements OnCardSelected{
 
 
     @Override
@@ -16,7 +16,14 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
         if(savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.container_fragment_scroll, ScrollFragment.newInstance()).commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.container_fragment_scroll, ScrollFragment.newInstance())
+                    .commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.container_fragment_card, DefaultFragment.newInstance())
+                    .commit();
         }
     }
 
@@ -40,5 +47,13 @@ public class MainActivity extends AppCompatActivity{
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCardSelected(Card c) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container_fragment_card,CardDisplayFragment.newInstance(c))
+                .commit();
     }
 }

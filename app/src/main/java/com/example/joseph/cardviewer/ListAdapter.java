@@ -15,10 +15,20 @@ import java.util.List;
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder>{
     private LayoutInflater inflater;
     private List<Card> list;
+    /*private final View.OnClickListener myOnClickListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+
+        }
+    };*/
 
     public ListAdapter(Activity activity, List<Card> list){
         inflater = activity.getLayoutInflater();
         this.list = list;
+    }
+
+    public void addItemsToList(List<Card> newItems){
+        list.addAll(newItems);
     }
 
     @Override
@@ -28,7 +38,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
 
     @Override
     public void onBindViewHolder(ListViewHolder holder, int position) {
-        holder.setContent(list.get(position).getTitle());
+        holder.setContent(list.get(position));
     }
 
     @Override
@@ -45,6 +55,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
         if(viewType == R.layout.list_item)
             holder = new ButtonViewHolder(inflater.inflate(viewType, parent, false));
         else holder = new ErrorViewHolder(inflater.inflate(viewType, parent, false));
+
         return holder;
     }
 
@@ -58,19 +69,33 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
         }
 
         abstract void setContent(T thing);
+
     }
 
-    public class ButtonViewHolder extends ListViewHolder<String>{
+    public class ButtonViewHolder extends ListViewHolder<Card>{
         private TextView textView;
+        private Card card;
+        private final View.OnClickListener listener;
 
         public ButtonViewHolder(View itemView){
             super(itemView);
+
             textView = (TextView) itemView.findViewById(R.id.textView);
+            listener = new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    ((OnCardSelected) v.getContext()).onCardSelected(card);
+                    ((TextView) v).setText("click");
+                }
+            };
+
         }
 
 
-        public void setContent(String str) {
-            textView.setText(str);
+        public void setContent(Card card) {
+            this.card = card;
+            textView.setText(card.getTitle());
+            textView.setOnClickListener(listener);
         }
     }
 
