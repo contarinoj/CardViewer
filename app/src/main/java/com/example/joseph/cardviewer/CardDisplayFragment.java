@@ -20,15 +20,16 @@ import android.widget.TextView;
  * create an instance of this fragment.
  */
 public class CardDisplayFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     // private static final String ARG_PARAM1 = "param1";
     // private static final String ARG_PARAM2 = "param2";
 
 
-    private Card card;
+    //private Card card;
     private TextView cardTitle;
     private TextView cardBody;
+    private String textTitle;
+    private String textBody;
 
 
     /**
@@ -39,14 +40,13 @@ public class CardDisplayFragment extends Fragment {
      * //@param param2 Parameter 2.
      * @return A new instance of fragment CardDisplayFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static CardDisplayFragment newInstance(Card card /*String param1, String param2*/) {
         CardDisplayFragment fragment = new CardDisplayFragment();
-        fragment.setCard(card);
-        // Bundle args = new Bundle();
-        // args.putString("card_title", card.getTitle());
-        // args.putString("card_body", card.getBodyText());
-        // fragment.setArguments(args);
+        //fragment.setCard(card);
+        Bundle args = new Bundle();
+        args.putString("card_title", card.getTitle());
+        args.putString("card_body", card.getBodyText());
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -54,16 +54,16 @@ public class CardDisplayFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public void setCard(Card card){
-        this.card = card;
-    }
+    //public void setCard(Card card){
+    //    this.card = card;
+    //}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-           // mParam1 = getArguments().getString(ARG_PARAM1);
-           // mParam2 = getArguments().getString(ARG_PARAM2);
+           textTitle = getArguments().getString("card_title");
+           textBody = getArguments().getString("card_body");
         }
     }
 
@@ -98,21 +98,54 @@ public class CardDisplayFragment extends Fragment {
 
                     @Override
                     public void run(){
-                        System.out.println(FINAL_VIEW.getHeight());
+                        ViewGroup.LayoutParams params = FINAL_VIEW.getLayoutParams();
                         System.out.println("Height: " + FINAL_VIEW.getHeight());
                         System.out.println("Width: " + FINAL_VIEW.getWidth());
                         System.out.println("Measured Height: " + FINAL_VIEW.getMeasuredHeight());
                         System.out.println("Measured Width: " + FINAL_VIEW.getMeasuredWidth());
+                        System.out.println("Param Width: " + params.width);
+                        System.out.println("Param Height: " + params.height);
+
+                        int frameHeight = FINAL_VIEW.getHeight();
+                        int frameWidth = FINAL_VIEW.getWidth();
+
+                        if(frameHeight*5/7 > frameWidth) {
+                            params.width = frameWidth;
+                            params.height = frameWidth*7/5;
+                        }
+                        else{
+                            params.height = frameHeight;
+                            params.width = frameHeight*5/7;
+                        }
+
+                        FINAL_VIEW.setLayoutParams(params);
+
+                        System.out.println("Param Width: " + params.width);
+                        System.out.println("Param Height: " + params.height);
+
                     }
                 }
         );
 
         cardTitle = (TextView) view.findViewById(R.id.textview_card_title);
         cardBody = (TextView) view.findViewById(R.id.textview_card_body);
+        if(savedInstanceState != null) {
+            cardTitle.setText(savedInstanceState.getString("card_title"));
+            cardBody.setText(savedInstanceState.getString("card_body"));
+        }
+        else
+        {
+            cardTitle.setText(textTitle);
+            cardBody.setText(textBody);
+        }
 
-        cardTitle.setText(card.getTitle());
-        cardBody.setText(card.getBodyText());
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("card_title", cardTitle.getText().toString());
+        outState.putString("card_body", cardBody.getText().toString());
     }
 
     /**
